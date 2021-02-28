@@ -20,9 +20,10 @@ namespace Jubilant_Server
             //Establish the local endpoint for the socket.
             //The DNS name of the server
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPAddress ipAddress = ipHostInfo.AddressList[1];
 
             Console.WriteLine("My IP is {0}", ipAddress.ToString());
+            Console.WriteLine("Listening on port {0}", PORT);
 
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, PORT);
 
