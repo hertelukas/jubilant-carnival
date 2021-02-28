@@ -15,12 +15,12 @@ namespace Jubilant_Server
         //Thread signal.
         public static ManualResetEvent allDone = new ManualResetEvent(false);
 
-        public static void StartListening()
+        public static void StartListening(int ip_number)
         {
             //Establish the local endpoint for the socket.
             //The DNS name of the server
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[1];
+            IPAddress ipAddress = ipHostInfo.AddressList[ip_number];
 
             Console.WriteLine("My IP is {0}", ipAddress.ToString());
             Console.WriteLine("Listening on port {0}", PORT);
@@ -143,7 +143,21 @@ namespace Jubilant_Server
 
         static void Main(string[] args)
         {
-            StartListening();
+            int ip_number = 0;
+            if(args.Length > 0)
+            {
+                try
+                {
+                    ip_number = Int32.Parse(args[0]);
+                }
+                catch (Exception e)
+                {
+                    Console.Error.Write("Could not parse argument: {0}", e);
+                }
+
+            }
+
+            StartListening(ip_number);
             Console.WriteLine("Hello World!");
         }
     }
