@@ -161,8 +161,6 @@ namespace Jubilant_Server
                 {
                     string[] temp = arg.Substring(2).Split("=");
 
-                    Console.WriteLine(temp[0]);
-
                     if (temp.Length == 1) HandleCommand(temp[0]);
                     else
                     {
