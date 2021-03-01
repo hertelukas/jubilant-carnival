@@ -10,7 +10,6 @@ namespace Jubilant_Server
 
     class Program
     {
-        private const int PORT = 36187;
         private const int MAX_CONNECTION_QUEUE = 20;
         private static int DEFAULT_IP = 0;
 
@@ -27,9 +26,9 @@ namespace Jubilant_Server
             IPAddress ipAddress = ipHostInfo.AddressList[argDict.GetValueOrDefault("ip")];
 
             Console.WriteLine("My IP is {0}", ipAddress.ToString());
-            Console.WriteLine("Listening on port {0}", PORT);
+            Console.WriteLine("Listening on port {0}", argDict.GetValueOrDefault("port"));
 
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, PORT);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, argDict.GetValueOrDefault("port"));
 
             //Create TCP/IP socket
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -155,6 +154,10 @@ namespace Jubilant_Server
 
         private static void ParseArguments(string[] args)
         {
+            //Add default values
+            argDict.Add("port", 36187);
+
+
             foreach (string arg in args)
             {
                 //Parse all arguments
@@ -167,7 +170,7 @@ namespace Jubilant_Server
                     {
                         try
                         {
-                            argDict.Add(temp[0], Int32.Parse(temp[1]));
+                            argDict.Add(temp[0].ToLower(), Int32.Parse(temp[1]));
                         }
                         catch (Exception e)
                         {
@@ -176,6 +179,8 @@ namespace Jubilant_Server
                     }
                 }
             }
+
+
         }
 
         private static void HandleCommand(string cmd)
