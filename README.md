@@ -1,7 +1,9 @@
 # Jubilant C# Server
 
 ## Options
-- `--help` to get help
-- `--listip` to get a list of the available ip adresses to host on.
-- `--ip=<Integer>` to specify the ip adress to listen on. (Default is 0, see `--listip` to get a list of available ip adresses)
-- `--port=<Integer>`to specify the port
+| Name               | Default | Description                                           |
+|--------------------|---------|-------------------------------------------------------|
+| `--help`           |         | Get help                                              |
+| `--listip`         |         | Get a list of available IP addresses to host on       |
+| `--ip=<Integer>`   | `0`     | Specify the IP address to listen on. (See `--listip`) |
+| `--port=<Integer>` | `36187` | Specify the port                                      |
