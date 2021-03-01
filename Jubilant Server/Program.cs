@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,16 +12,19 @@ namespace Jubilant_Server
     {
         private const int PORT = 36187;
         private const int MAX_CONNECTION_QUEUE = 20;
+        private static int DEFAULT_IP = 0;
+
+        private static Dictionary<string, int> argDict = new Dictionary<string, int>();
 
         //Thread signal.
         public static ManualResetEvent allDone = new ManualResetEvent(false);
 
-        public static void StartListening(int ip_number)
+        public static void StartListening()
         {
             //Establish the local endpoint for the socket.
             //The DNS name of the server
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[ip_number];
+            IPAddress ipAddress = ipHostInfo.AddressList[argDict.GetValueOrDefault("ip")];
 
             Console.WriteLine("My IP is {0}", ipAddress.ToString());
             Console.WriteLine("Listening on port {0}", PORT);
@@ -143,24 +147,72 @@ namespace Jubilant_Server
 
         static void Main(string[] args)
         {
+            ParseArguments(args);
 
-            //TODO this should be interactive?
-            int ip_number = 0;
-            if(args.Length > 0)
-            {
-                try
-                {
-                    ip_number = Int32.Parse(args[0]);
-                }
-                catch (Exception e)
-                {
-                    Console.Error.Write("Could not parse argument: {0}", e);
-                }
-
-            }
-
-            StartListening(ip_number);
+            StartListening();
             Console.WriteLine("Hello World!");
+        }
+
+        private static void ParseArguments(string[] args)
+        {
+            foreach (string arg in args)
+            {
+                //Parse all arguments
+                if (arg.StartsWith("--"))
+                {
+                    string[] temp = arg.Substring(2).Split("=");
+
+                    if (temp.Length == 1) HandleCommand(temp[0]);
+                    else
+                    {
+                        try
+                        {
+                            argDict.Add(temp[0], Int32.Parse(temp[1]));
+                        }
+                        catch (Exception e)
+                        {
+                            throw new ArgumentException($"Could not parse argument: {e}");
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void HandleCommand(string cmd)
+        {
+            switch (cmd)
+            {
+                case "help":
+                    PrintHelp();
+                    break;
+                case "listip":
+                    ListIPs();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void ListIPs()
+        {
+            Console.WriteLine("Available IP addresses");
+            Console.WriteLine("----------------------");
+
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[argDict.GetValueOrDefault("ip")];
+
+
+            int i = 0;
+            foreach (IPAddress addr in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            {
+                Console.WriteLine($"{i}: {addr.ToString()}");
+                i++;
+            }
+        }
+
+        private static void PrintHelp()
+        {
+            Console.WriteLine("HELP");
         }
     }
 }
