@@ -154,16 +154,14 @@ namespace Jubilant_Server
 
         private static void ParseArguments(string[] args)
         {
-            //Add default values
-            argDict.Add("port", 36187);
-
-
             foreach (string arg in args)
             {
                 //Parse all arguments
                 if (arg.StartsWith("--"))
                 {
                     string[] temp = arg.Substring(2).Split("=");
+
+                    Console.WriteLine(temp[0]);
 
                     if (temp.Length == 1) HandleCommand(temp[0]);
                     else
@@ -179,6 +177,9 @@ namespace Jubilant_Server
                     }
                 }
             }
+
+            //Add default values
+            argDict.TryAdd("port", 36187);
 
 
         }
