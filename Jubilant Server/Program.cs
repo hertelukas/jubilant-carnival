@@ -143,6 +143,8 @@ namespace Jubilant_Server
 
         static void Main(string[] args)
         {
+
+            //TODO this should be interactive?
             int ip_number = 0;
             if(args.Length > 0)
             {
