@@ -11,7 +11,6 @@ namespace Jubilant_Server
     class Program
     {
         private const int MAX_CONNECTION_QUEUE = 20;
-        private static int DEFAULT_IP = 0;
 
         private static Dictionary<string, int> argDict = new Dictionary<string, int>();
 

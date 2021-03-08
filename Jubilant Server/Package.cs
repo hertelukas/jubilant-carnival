@@ -12,10 +12,9 @@ namespace Jubilant_Server
         public int playerId { get; set; }
         public PackageType packageId { get; set; }
         public int gameId { get; set; }
-        public int version { get; set; }
+        public string version { get; set; }
         public string content { get; set; }
         public Socket socket { get; set; }
-
 
         public Package(string data, Socket socket)
         {
@@ -34,7 +33,7 @@ namespace Jubilant_Server
                 this.playerId = Int32.Parse(information[0]);
                 this.packageId = (PackageType)Int32.Parse(information[1]);
                 this.gameId = Int32.Parse(information[2]);
-                this.version = Int32.Parse(information[3]);
+                this.version = information[3];
                 this.content = information[4];
             }catch(Exception e)
             {
