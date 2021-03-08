@@ -47,9 +47,7 @@ namespace Jubilant_Server
                     //Start an asynchronous socket to listen for connections
                     Console.WriteLine("Waiting for a connection...");
 
-                    listener.BeginAccept(
-                        new AsyncCallback(AcceptCallback),
-                        listener);
+                    listener.BeginAccept(new AsyncCallback(AcceptCallback), listener);
 
                     //Wait until a connection is made before continuing
                     allDone.WaitOne();
@@ -78,6 +76,8 @@ namespace Jubilant_Server
             handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
         }
 
+        
+
         private static void ReadCallback(IAsyncResult ar)
         {
             String content = String.Empty;
@@ -102,19 +102,20 @@ namespace Jubilant_Server
                 if(content.IndexOf("<EOF>") > -1)
                 {
                     //All the data has been read from the client.
-                    //TODO this might be wrong, because UTF 8 is not a byte per word afaik
                     Console.WriteLine("Read {0} bytes form socket. \n Data: {1}", content.Length, content);
 
-                    Send(handler, content);
+                    //Handle the received package
+                    GameManager.HandlePackage(content, handler);
+
+                    content = String.Empty;
+                    state.sb = new StringBuilder();
                 }
-                else
-                {
-                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
-                }
+
+                 handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
             }
         }
 
-        private static void Send(Socket handler, String data)
+        public static void Send(Socket handler, String data)
         {
             //Convert the string data to byte data using ASCII encoding
             byte[] byteData = Encoding.UTF8.GetBytes(data);
@@ -133,9 +134,6 @@ namespace Jubilant_Server
                 // Complete sending the data to the remote device.  
                 int bytesSent = handler.EndSend(ar);
                 Console.WriteLine("Sent {0} bytes to client.", bytesSent);
-
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
 
             }
             catch (Exception e)
@@ -178,8 +176,6 @@ namespace Jubilant_Server
 
             //Add default values
             argDict.TryAdd("port", 36187);
-
-
         }
 
         private static void HandleCommand(string cmd)
