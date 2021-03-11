@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Jubilant_Server
 {
-    enum PackageType
+    public enum PackageType
     {
-        Welcome, WelcomeReceived
+        Welcome, WelcomeReceived, UsernameTaken
     }
 }

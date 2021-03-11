@@ -11,6 +11,7 @@ namespace Jubilant_Server
     {
 
         private static int counter = 0;
+        private static Dictionary<int, Player> players = new Dictionary<int, Player>();
 
         public static void HandlePackage(string data, Socket socket)
         {
@@ -25,7 +26,7 @@ namespace Jubilant_Server
             switch (package.packageId)
             {
                 case PackageType.Welcome:
-                    CreateNewPlayer(package.socket).Send();                    
+                    CreateNewPlayer(package.socket, package.content).Send();                    
                     break;
                 case PackageType.WelcomeReceived:
                     break;
@@ -34,9 +35,16 @@ namespace Jubilant_Server
             }
         }
 
-        private static WelcomeReceivedPackage CreateNewPlayer(Socket socket)
+        private static Package CreateNewPlayer(Socket socket, string username)
         {
-            return new WelcomeReceivedPackage(counter++, socket);
+            foreach (var player in players)
+            {
+                if (player.Value.username == username) return new Packages.UsernameTakenPackage(-1, socket);
+            }
+
+            Player newPlayer = new Player(socket, Role.Unknown, 0, username, null);
+            players.Add(counter++, newPlayer);
+            return new Packages.WelcomeReceivedPackage(counter, socket);
         }
     }
 }

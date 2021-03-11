@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Jubilant_Server
 {
-    class Package
+    public class Package
     {
         public int playerId { get; set; }
         public PackageType packageId { get; set; }

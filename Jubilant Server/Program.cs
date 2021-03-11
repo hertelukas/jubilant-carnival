@@ -79,38 +79,46 @@ namespace Jubilant_Server
 
         private static void ReadCallback(IAsyncResult ar)
         {
-            String content = String.Empty;
-            Console.WriteLine("New connection...");
-
-            //Retrieve the state object and the handler socket
-            //from the asynchronous state object
-            StateObject state = (StateObject)ar.AsyncState;
-            Socket handler = state.workSocket;
-
-            //Read the data from the client socket
-            int bytesRead = handler.EndReceive(ar);
-
-            if(bytesRead > 0)
+            try
             {
-                //There might be more data, so store the data received so far
-                state.sb.Append(Encoding.UTF8.GetString(
-                    state.buffer, 0, bytesRead));
 
-                //Check for end-of-file tag. If not there, read more data
-                content = state.sb.ToString();
-                if(content.IndexOf("<EOF>") > -1)
+
+                String content = String.Empty;
+                Console.WriteLine("New connection...");
+
+                //Retrieve the state object and the handler socket
+                //from the asynchronous state object
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket handler = state.workSocket;
+
+                //Read the data from the client socket
+                int bytesRead = handler.EndReceive(ar);
+
+                if (bytesRead > 0)
                 {
-                    //All the data has been read from the client.
-                    Console.WriteLine("Read {0} bytes form socket. \n Data: {1}", content.Length, content);
+                    //There might be more data, so store the data received so far
+                    state.sb.Append(Encoding.UTF8.GetString(
+                        state.buffer, 0, bytesRead));
 
-                    //Handle the received package
-                    GameManager.HandlePackage(content, handler);
+                    //Check for end-of-file tag. If not there, read more data
+                    content = state.sb.ToString();
+                    if (content.IndexOf("<EOF>") > -1)
+                    {
+                        //All the data has been read from the client.
+                        Console.WriteLine("Read {0} bytes form socket. \n Data: {1}", content.Length, content);
 
-                    content = String.Empty;
-                    state.sb = new StringBuilder();
+                        //Handle the received package
+                        GameManager.HandlePackage(content, handler);
+
+                        content = String.Empty;
+                        state.sb = new StringBuilder();
+                    }
+
+                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
                 }
-
-                 handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
