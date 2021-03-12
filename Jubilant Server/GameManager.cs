@@ -11,7 +11,9 @@ namespace Jubilant_Server
     {
 
         private static int counter = 0;
-        private static Dictionary<int, Player> players = new Dictionary<int, Player>();
+        private static int gameCounter = 0;
+        public static Dictionary<int, Player> players = new Dictionary<int, Player>();
+        public static Dictionary<int, Game> games = new Dictionary<int, Game>();
 
         public static void HandlePackage(string data, Socket socket)
         {
@@ -30,6 +32,9 @@ namespace Jubilant_Server
                     break;
                 case PackageType.WelcomeReceived:
                     break;
+                case PackageType.CreateGame:
+                    CreateNewGame(package.content, package.playerId).SendToAllPlayers();
+                    break;
                 default:
                     break;
             }
@@ -45,6 +50,23 @@ namespace Jubilant_Server
             Player newPlayer = new Player(socket, Role.Unknown, 0, username, null);
             players.Add(counter++, newPlayer);
             return new Packages.WelcomeReceivedPackage(counter, socket);
+        }
+
+        private static Package CreateNewGame(string content, int player)
+        {
+            string[] data = content.Split(",");
+            int maxPlayers = 15;
+            try
+            {
+                maxPlayers = Int32.Parse(data[1]);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Unable to parse maxPlayers. Setting to default");
+            }
+            Game newGame = new Game(data[0], maxPlayers, gameCounter++, players.GetValueOrDefault(player));
+            games.Add(gameCounter, newGame);
+            return new Packages.GameCreated(newGame);
         }
     }
 }

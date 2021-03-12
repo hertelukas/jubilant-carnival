@@ -8,6 +8,6 @@ namespace Jubilant_Server
 {
     public enum PackageType
     {
-        Welcome, WelcomeReceived, UsernameTaken
+        Welcome, WelcomeReceived, UsernameTaken, CreateGame, GameCreated
     }
 }

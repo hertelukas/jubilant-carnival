@@ -9,12 +9,19 @@ namespace Jubilant_Server
     class Game
     {
         private List<Player> players = new List<Player>();
+        public int maxPlayers { get; set; }
+        public string name { get; set; }
+        public Player admin { get; set; }
 
-
-
-        public void SendToAll()
+        public int id { get; set; }
+        public Game(string name, int maxPlayers, int id, Player admin)
         {
-
+            this.name = name;
+            this.maxPlayers = maxPlayers;
+            this.id = id;
+            this.admin = admin;
         }
+
+
     }
 }

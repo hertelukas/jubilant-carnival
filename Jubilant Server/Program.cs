@@ -81,8 +81,6 @@ namespace Jubilant_Server
         {
             try
             {
-
-
                 String content = String.Empty;
                 Console.WriteLine("New connection...");
 

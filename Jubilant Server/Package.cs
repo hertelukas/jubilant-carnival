@@ -41,6 +41,11 @@ namespace Jubilant_Server
             }
         }
 
+        public Package()
+        {
+
+        }
+
         private string GetData()
         {
             string result = $"{playerId}:{(int)packageId}:{gameId}:{version}:{GetContent()}<EOF>";
@@ -51,7 +56,22 @@ namespace Jubilant_Server
 
         public void Send()
         {
+            if (socket == null)
+            {
+                Console.WriteLine("Can not send on null socket.");
+                return;
+            }
+
             Program.Send(socket, GetData());
+        }
+
+        public void SendToAllPlayers()
+        {
+            string data = GetData();
+            foreach (var player in GameManager.players)
+            {
+                Program.Send(player.Value.socket, data);
+            }
         }
     }
 }
