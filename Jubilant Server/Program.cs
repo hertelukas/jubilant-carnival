@@ -79,6 +79,7 @@ namespace Jubilant_Server
 
         private static void ReadCallback(IAsyncResult ar)
         {
+            Socket handler = null;
             try
             {
                 String content = String.Empty;
@@ -87,7 +88,7 @@ namespace Jubilant_Server
                 //Retrieve the state object and the handler socket
                 //from the asynchronous state object
                 StateObject state = (StateObject)ar.AsyncState;
-                Socket handler = state.workSocket;
+                handler = state.workSocket;
 
                 //Read the data from the client socket
                 int bytesRead = handler.EndReceive(ar);
@@ -114,9 +115,10 @@ namespace Jubilant_Server
 
                     handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
                 }
-            }catch(Exception e)
+            }catch(Exception)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine("Connection lost with client");
+                if(!(handler is null)) GameManager.Disconnect(handler);
             }
         }
 

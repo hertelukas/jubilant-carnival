@@ -35,8 +35,35 @@ namespace Jubilant_Server
                 case PackageType.CreateGame:
                     CreateNewGame(package.content, package.playerId).SendToAllPlayers();
                     break;
+                case PackageType.Disconnect:
+                    Disconnect(package.playerId);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private static void Disconnect(int playerId)
+        {
+            Player playerToRemove;
+            if(players.TryGetValue(playerId, out playerToRemove))
+            {
+                //Todo remove player from game
+                Console.WriteLine($"Found player {playerToRemove.username}. Removing...");
+                players.Remove(playerId);
+            }
+        }
+
+        public static void Disconnect(Socket socket)
+        {
+            foreach (var player in players)
+            {
+                if(player.Value.socket == socket)
+                {
+                    Console.WriteLine($"Forceably removing {player.Value.username}");
+                    Disconnect(player.Key);
+                    return;
+                }
             }
         }
 
@@ -48,8 +75,8 @@ namespace Jubilant_Server
             }
 
             Player newPlayer = new Player(socket, Role.Unknown, 0, username, null);
-            players.Add(counter++, newPlayer);
-            return new Packages.WelcomeReceivedPackage(counter, socket);
+            players.Add(counter, newPlayer);
+            return new Packages.WelcomeReceivedPackage(counter++, socket);
         }
 
         private static Package CreateNewGame(string content, int player)
