@@ -24,8 +24,8 @@ namespace Jubilant_Server
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[argDict.GetValueOrDefault("ip")];
 
-            Console.WriteLine("My IP is {0}", ipAddress.ToString());
-            Console.WriteLine("Listening on port {0}", argDict.GetValueOrDefault("port"));
+            Debug.LogInfo($"My IP is {ipAddress}");
+            Debug.LogInfo($"Listening on port {argDict.GetValueOrDefault("port")}");
 
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, argDict.GetValueOrDefault("port"));
 
@@ -44,7 +44,7 @@ namespace Jubilant_Server
                     allDone.Reset();
 
                     //Start an asynchronous socket to listen for connections
-                    Console.WriteLine("Waiting for a connection...");
+                    Debug.LogInfo("Listening for new connections...");
 
                     listener.BeginAccept(new AsyncCallback(AcceptCallback), listener);
 
@@ -53,7 +53,7 @@ namespace Jubilant_Server
                 }
             }catch(Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Debug.LogError("Error listening: " + e.Message);
             }
 
             Console.WriteLine("\n Press ENTER to stop the server...");
@@ -83,7 +83,6 @@ namespace Jubilant_Server
             try
             {
                 String content = String.Empty;
-                Console.WriteLine("New connection...");
 
                 //Retrieve the state object and the handler socket
                 //from the asynchronous state object
@@ -104,7 +103,7 @@ namespace Jubilant_Server
                     if (content.IndexOf("<EOF>") > -1)
                     {
                         //All the data has been read from the client.
-                        Console.WriteLine("Read {0} bytes form socket. \n Data: {1}", content.Length, content);
+                        Debug.LogInfo($"Read {content.Length} bytes form socket. \nData: {content}");
 
                         //Handle the received package
                         GameManager.HandlePackage(content, handler);
@@ -117,7 +116,7 @@ namespace Jubilant_Server
                 }
             }catch(Exception)
             {
-                Console.WriteLine("Connection lost with client");
+                Debug.LogWarning("Unexpected connection loss with client");
                 if(!(handler is null)) GameManager.Disconnect(handler);
             }
         }
@@ -140,12 +139,12 @@ namespace Jubilant_Server
 
                 // Complete sending the data to the remote device.  
                 int bytesSent = handler.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to client.", bytesSent);
+                Debug.LogInfo($"Sent {bytesSent} bytes to client");
 
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Debug.LogError("Failed to send message to client: " + e.Message);
             }
         }
 
@@ -154,7 +153,6 @@ namespace Jubilant_Server
             ParseArguments(args);
 
             StartListening();
-            Console.WriteLine("Hello World!");
         }
 
         private static void ParseArguments(string[] args)

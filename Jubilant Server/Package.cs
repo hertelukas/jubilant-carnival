@@ -37,7 +37,7 @@ namespace Jubilant_Server
                 this.content = information[4];
             }catch(Exception e)
             {
-                Console.WriteLine($"Error processing package: {e}");
+                Debug.LogError($"Error processing package: {e.Message}");
             }
         }
 
@@ -58,7 +58,7 @@ namespace Jubilant_Server
         {
             if (socket == null)
             {
-                Console.WriteLine("Can not send on null socket.");
+                Debug.LogError("Can not send on null socket.");
                 return;
             }
 

@@ -9,7 +9,7 @@ namespace Jubilant_Server
 {
     static class GameManager
     {
-
+        private static readonly int DEFAULT_PLAYERS = 15;
         private static int counter = 0;
         private static int gameCounter = 0;
         public static Dictionary<int, Player> players = new Dictionary<int, Player>();
@@ -23,7 +23,7 @@ namespace Jubilant_Server
 
         public static void HandlePackage(Package package)
         {
-            Console.WriteLine($"Handling Package {package.packageId}. Sender: {package.playerId}");
+            Debug.LogInfo($"Handling Package {package.packageId}. Sender: {package.playerId}");
 
             switch (package.packageId)
             {
@@ -49,7 +49,7 @@ namespace Jubilant_Server
             if(players.TryGetValue(playerId, out playerToRemove))
             {
                 //Todo remove player from game
-                Console.WriteLine($"Found player {playerToRemove.username}. Removing...");
+                Debug.LogInfo($"Found player {playerToRemove.username}. Removing...");
                 players.Remove(playerId);
             }
         }
@@ -60,7 +60,7 @@ namespace Jubilant_Server
             {
                 if(player.Value.socket == socket)
                 {
-                    Console.WriteLine($"Forceably removing {player.Value.username}");
+                    Debug.LogWarning($"Forceably removing {player.Value.username}");
                     Disconnect(player.Key);
                     return;
                 }
@@ -82,14 +82,14 @@ namespace Jubilant_Server
         private static Package CreateNewGame(string content, int player)
         {
             string[] data = content.Split(",");
-            int maxPlayers = 15;
+            int maxPlayers = DEFAULT_PLAYERS;
             try
             {
                 maxPlayers = Int32.Parse(data[1]);
             }
             catch(Exception)
             {
-                Console.WriteLine("Unable to parse maxPlayers. Setting to default");
+                Debug.LogWarning($"Unable to parse maxPlayers while creating a new game. Setting to default: {DEFAULT_PLAYERS}");
             }
             Game newGame = new Game(data[0], maxPlayers, gameCounter++, players.GetValueOrDefault(player));
             games.Add(gameCounter, newGame);
