@@ -17,7 +17,7 @@ namespace Jubilant_Server.Packages
 
         public override string GetContent()
         {
-            return $"{game.name},{game.maxPlayers},{game.id}";
+            return $"{game.name},{game.maxPlayers},{game.id}, {game.admin.id}";
         }
     }
 }

@@ -14,14 +14,16 @@ namespace Jubilant_Server
         public int money { get; set; }
         public string username { get; set; }
         public Game game { get; set; }
+        public int id { get; set; }
 
         public Player()
         {
 
         }
 
-        public Player(Socket socket, Role role, int money, string username, Game game)
+        public Player(int id, Socket socket, Role role, int money, string username, Game game)
         {
+            this.id = id;
             this.socket = socket;
             this.role = role;
             this.money = money;

@@ -74,7 +74,7 @@ namespace Jubilant_Server
                 if (player.Value.username == username) return new Packages.UsernameTakenPackage(-1, socket);
             }
 
-            Player newPlayer = new Player(socket, Role.Unknown, 0, username, null);
+            Player newPlayer = new Player(counter, socket, Role.Unknown, 0, username, null);
             players.Add(counter, newPlayer);
             return new Packages.WelcomeReceivedPackage(counter++, socket);
         }
