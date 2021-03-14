@@ -192,9 +192,17 @@ namespace Jubilant_Server
                     }
                     break;
                 case "getip":
-                    TextCopy.Clipboard clipboard = new TextCopy.Clipboard();
-                    clipboard.SetText(ip);
-                    Console.WriteLine("Copied the ip to your clipboard");
+                    try
+                    {
+                        TextCopy.Clipboard clipboard = new TextCopy.Clipboard();
+                        clipboard.SetText(ip);
+                        Console.WriteLine("Copied the ip to your clipboard");
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.LogError("Failed to copy ip to your clipboard: " + e.Message);
+                    }
+
                     break;
                 case "exit":
                     running = false;
