@@ -8,19 +8,17 @@ namespace Jubilant_Server
 {
     public static class Debug
     {
-        private static ConsoleColor defaultColor = ConsoleColor.White;
 
         public static void LogWarning(string msg)
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             string prefix = $"[{DateTime.Now:HH:mm:ss} : Warning]";
             Console.WriteLine(FormatLines(msg, prefix));
-            Console.ForegroundColor = defaultColor;
+            Console.ResetColor();
         }
 
         public static void LogInfo(string msg)
         {
-            Console.ForegroundColor = defaultColor;
             string prefix = $"[{DateTime.Now.ToString("HH:mm:ss")} : Info]";
             Console.WriteLine(FormatLines(msg, prefix));
         }
@@ -30,7 +28,7 @@ namespace Jubilant_Server
             Console.ForegroundColor = ConsoleColor.Red;
             string prefix = $"[{DateTime.Now.ToString("HH:mm:ss")} : Error]";
             Console.WriteLine(FormatLines(msg, prefix));
-            Console.ForegroundColor = defaultColor;
+            Console.ResetColor();
         }
 
         private static string FormatLines(string msg, string prefix)

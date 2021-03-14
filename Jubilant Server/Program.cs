@@ -16,6 +16,10 @@ namespace Jubilant_Server
 
         //Thread signal.
         public static ManualResetEvent allDone = new ManualResetEvent(false);
+        public static ManualResetEvent serverStarted = new ManualResetEvent(false);
+
+        private static string ip = "None";
+        private static bool running = true;
 
         public static void StartListening()
         {
@@ -23,6 +27,8 @@ namespace Jubilant_Server
             //The DNS name of the server
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[argDict.GetValueOrDefault("ip")];
+
+            ip = ipAddress.ToString();
 
             Debug.LogInfo($"My IP is {ipAddress}");
             Debug.LogInfo($"Listening on port {argDict.GetValueOrDefault("port")}");
@@ -37,8 +43,9 @@ namespace Jubilant_Server
             {
                 listener.Bind(localEndPoint);
                 listener.Listen(MAX_CONNECTION_QUEUE);
+                serverStarted.Set();
 
-                while (true)
+                while (running)
                 {
                     //Set the event to nonsignaled state
                     allDone.Reset();
@@ -55,9 +62,6 @@ namespace Jubilant_Server
             {
                 Debug.LogError("Error listening: " + e.Message);
             }
-
-            Console.WriteLine("\n Press ENTER to stop the server...");
-            Console.Read();
         }
 
         public static void AcceptCallback(IAsyncResult ar)
@@ -152,7 +156,53 @@ namespace Jubilant_Server
         {
             ParseArguments(args);
 
-            StartListening();
+            Thread thread = new Thread(StartListening);
+            thread.Start();
+            serverStarted.WaitOne();
+
+            while (running)
+            {
+                Console.Write(">");
+                HandleInput(Console.ReadLine());
+            }
+        }
+
+        private static void HandleInput(string cmd)
+        {
+            switch (cmd)
+            {
+                case "clear":
+                    Console.Clear();
+                    break;
+                case "ip":
+                    Console.WriteLine(ip);
+                    break;
+                case "players":
+                    if(GameManager.players.Count > 0)
+                    {
+                        Console.WriteLine("Connected players:");
+                        foreach (Player player in GameManager.players.Values)
+                        {
+                            Console.WriteLine($"{player.username}:{player.id}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No players online");
+                    }
+                    break;
+                case "getip":
+                    TextCopy.Clipboard clipboard = new TextCopy.Clipboard();
+                    clipboard.SetText(ip);
+                    Console.WriteLine("Copied the ip to your clipboard");
+                    break;
+                case "exit":
+                    running = false;
+                    break;
+                default:
+                    Console.WriteLine("Command not found");
+                    break;
+            }
         }
 
         private static void ParseArguments(string[] args)
@@ -218,6 +268,11 @@ namespace Jubilant_Server
         private static void PrintHelp()
         {
             Console.WriteLine("HELP");
+        }
+
+        private static void Exit()
+        {
+
         }
     }
 }

@@ -6,4 +6,8 @@
     <RootNamespace>Jubilant_Server</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="TextCopy" Version="4.3.0" />
+  </ItemGroup>
+
 </Project>
